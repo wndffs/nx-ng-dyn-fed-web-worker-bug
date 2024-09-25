@@ -19,7 +19,18 @@ import { distinctUntilChanged } from 'rxjs/operators';
 export class AppComponent implements OnInit {
   isLoggedIn$ = this.userService.isUserLoggedIn$;
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(private userService: UserService, private router: Router) {
+    const worker: Worker = new Worker(
+      new URL('./my-web-worker.worker.ts', import.meta.url),
+      {
+        name: 'my-web-worker',
+        type: 'module',
+      }
+    );
+    worker.onmessage = (event: MessageEvent): void => {
+      console.log('event: ', event);
+    };
+  }
 
   ngOnInit() {
     this.isLoggedIn$
